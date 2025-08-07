@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YFinance Alert Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body class="min-h-screen bg-base-200">
+    <div class="container mx-auto p-4 max-w-7xl">
+        <!-- Header -->
+        <div class="navbar bg-base-100 rounded-box mb-6 shadow-lg">
+            <div class="flex-1">
+                <h1 class="text-2xl font-bold text-primary">YFinance Alert Manager</h1>
+            </div>
+            <div class="flex-none">
+                <label class="swap swap-rotate">
+                    <input type="checkbox" id="themeToggle" />
+                    <svg class="swap-on fill-current w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/></svg>
+                    <svg class="swap-off fill-current w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/></svg>
+                </label>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: Subscriptions and Alert Management -->
+            <div class="lg:col-span-1 space-y-4">
+                <!-- Stock Subscription Card -->
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">Stock Subscriptions</h2>
+                        <div class="form-control">
+                            <div class="join w-full">
+                                <input type="text" id="stockSymbol" placeholder="e.g., AAPL, BTC-USD" class="input input-bordered join-item flex-1" />
+                                <button id="addStockBtn" class="btn btn-primary join-item">Add</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Active Subscriptions List -->
+                        <div class="divider">Active Subscriptions</div>
+                        <div id="subscriptionsList" class="space-y-2 max-h-48 overflow-y-auto">
+                            <!-- Subscriptions will be added here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts Management Card -->
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">Alert Management</h2>
+                        
+                        <!-- Add/Edit Alert Form -->
+                        <div class="space-y-3">
+                            <input type="hidden" id="alertId" value="">
+                            <select id="alertSymbol" class="select select-bordered w-full">
+                                <option value="">Select Stock</option>
+                            </select>
+                            <input type="number" id="alertPrice" step="0.01" placeholder="Alert Price" class="input input-bordered w-full" />
+                            <select id="alertCondition" class="select select-bordered w-full">
+                                <option value="above">Price Above ↑</option>
+                                <option value="below">Price Below ↓</option>
+                                <option value="equal">Price Equal =</option>
+                            </select>
+                            <div class="flex gap-2">
+                                <button id="saveAlertBtn" class="btn btn-success flex-1">Save Alert</button>
+                                <button id="cancelEditBtn" class="btn btn-ghost" style="display:none;">Cancel</button>
+                            </div>
+                        </div>
+                        
+                        <!-- All Alerts List -->
+                        <div class="divider">All Alerts</div>
+                        <div id="alertsList" class="space-y-2 max-h-64 overflow-y-auto">
+                            <!-- Alerts will be listed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Column: Live Prices -->
+            <div class="lg:col-span-1">
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">Live Stock Prices</h2>
+                        <div id="stockPricesContainer" class="space-y-3">
+                            <div class="text-center text-base-content/50 py-8">
+                                <p>Add stocks to see live prices</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Active Alerts and Triggered Alerts Log -->
+            <div class="lg:col-span-1 space-y-4">
+                <!-- Active Alerts Display -->
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">Active Alerts</h2>
+                        <div id="activeAlertsDisplay" class="space-y-2 max-h-64 overflow-y-auto">
+                            <div class="text-center text-base-content/50">
+                                <p>No active alerts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Triggered Alerts Log -->
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">Triggered Alerts Log</h2>
+                        <div id="alertsLog" class="space-y-2 max-h-80 overflow-y-auto">
+                            <div class="text-center text-base-content/50 py-8">
+                                <p>Triggered alerts will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <dialog id="alertModal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Alert Triggered!</h3>
+            <p class="py-4" id="alertMessage"></p>
+            <div class="modal-action">
+                <button class="btn" onclick="alertModal.close()">Close</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Audio for alerts -->
+    <audio id="alertSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGFzvLNmU0EHGvA7OWeTQ0EVajv8cNfJARLqOPvt2MfCDCR1PLLeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGFzvLNmU0EHGvA7OWeTQ0EVajv8cNfJARLqOPvt2MfCDCR1PLLeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGFzvLNmU0EHGvA7OWeTQ0EVajv8cNfJARLqOPvt2MfCDCR1PLLeSwDGUyk5u7AcCYDGk+m5u7AcCYDGl+y6+2uWBUDLITL792KOgUYZ7vs5ptJDAdVuuXyt1IcBzCR1/DBeSwDI4LK8NCGNwUeeMXu4KVZCAVYqOXyvmwhBDuW0/PGdikEKITM8tCENwUeeMXu4KVZCAVYqOXyvmwhBDuW0/PGdikEKITM8tCENwUeeMXu4KVZCAVYqOXyvmwhBDuW0/PGdikEKITM8tCENwUeeMXu4KVZCAVYqOXyvmwhBDuW0/PGdikEJYTO7tSRQgUUXLzn66hVFABHquDyvmwhBTGFzvLNmU0EHGvA7OWeTQ0EVajv8cNfJARLqOPvt2MfCDCR1PLLeSsFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGFzvLNmU0EHGvA7OWeTQ0EVajv8cNfJARLqOPvt2MfCDCR1PLLeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGFzvLNmU0EHGvA7OWeTQ0EVajv8cNfJARLqOPvt2MfCDCR1PLLeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGFzvLNmU0EHGvA7OWeTQ0EVajv8cNfJARLqOPvt2MfCDCR1PLLeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBDCJ0PHJiUUEIWjA7eSeTQwEUqjv8cNuLAZJn+Dwy4U6BCB8y+zWkUAMDVuw5+rJbDUEKIbP8ceGPAYlfc7s148+CRNht+Xqs1wdA0Kw4OuzYiAGO57P9sluMgUfgMju04cxDRVuwu/brU8XBy6PzPPNhTwGHXbN7NeGPQwRaLTo5aFQCwdYsuDkn1UVCEKw3+uzWyAGO57P9sluMgUfgMju04cxDRVuwu/brU8XBy6PzPPNhUEGHXbN7NeGPQwRaLTo5aFQCwdYsuDkn1UVCEKw3+uzWyAGO57P9sluMgUfgMju04cxDRVuwu/brU8XBy6PzPPNhUEGHXbN7NeGPQwRaLTo5aFQCwdYsuDkn1UVCEKw3+uzWyAGO57P9sluMgUfgMju04cxDRVuwu/brU8XBy6PzPPNhUEGHXbN7NeGPQwRaLTo5aFQCwdYsuDkn1UVCEKw3+uzWyAGO57P9sluMgUfgMju04cxDRVuwu/brU8XBy6PzPPNhUEGHXbN7NeGPQwRaLTo5aFQCwdYsuDkn1UVCEKw3+uzWyAGO57P9sluMgUfgMju04cxDRVuwu/brU8XBy6PzPPNhUEGHXbN7NeGPQwRaLTo5aFQCwdYsuDkn1UVCEKw3+uzWyAGO57P9sluMgUfgMju04cxDRVuwu/brU8XBy6PzPPNhUEGHXbN7NeGPQ==" type="audio/wav">
+    </audio>
+
+    <script>
+        // Initialize Socket.IO
+        const socket = io();
+        
+        // State management
+        let activeSubscriptions = new Set();
+        let activeAlerts = [];
+        let stockPrices = {};
+        let editingAlertId = null;
+        
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('change', (e) => {
+            document.documentElement.setAttribute('data-theme', e.target.checked ? 'light' : 'dark');
+        });
+        
+        // Add stock subscription
+        document.getElementById('addStockBtn').addEventListener('click', () => {
+            const symbol = document.getElementById('stockSymbol').value.trim().toUpperCase();
+            if (symbol && !activeSubscriptions.has(symbol)) {
+                socket.emit('subscribe', { symbol });
+                activeSubscriptions.add(symbol);
+                updateSubscriptionsList();
+                updateAlertSymbolOptions();
+                document.getElementById('stockSymbol').value = '';
+            }
+        });
+        
+        // Save/Update alert
+        document.getElementById('saveAlertBtn').addEventListener('click', () => {
+            const symbol = document.getElementById('alertSymbol').value;
+            const price = parseFloat(document.getElementById('alertPrice').value);
+            const condition = document.getElementById('alertCondition').value;
+            
+            if (!symbol || isNaN(price) || price <= 0) {
+                showToast('Please fill all fields correctly', 'error');
+                return;
+            }
+            
+            if (editingAlertId) {
+                // Update existing alert
+                socket.emit('update_alert', {
+                    id: editingAlertId,
+                    price,
+                    condition
+                });
+                editingAlertId = null;
+                document.getElementById('alertId').value = '';
+                document.getElementById('cancelEditBtn').style.display = 'none';
+                document.getElementById('saveAlertBtn').textContent = 'Save Alert';
+            } else {
+                // Create new alert
+                socket.emit('create_alert', {
+                    symbol,
+                    price,
+                    condition
+                });
+            }
+            
+            // Clear form
+            document.getElementById('alertPrice').value = '';
+            document.getElementById('alertSymbol').value = '';
+        });
+        
+        // Cancel edit
+        document.getElementById('cancelEditBtn').addEventListener('click', () => {
+            editingAlertId = null;
+            document.getElementById('alertId').value = '';
+            document.getElementById('alertPrice').value = '';
+            document.getElementById('alertSymbol').value = '';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            document.getElementById('saveAlertBtn').textContent = 'Save Alert';
+        });
+        
+        // Socket event handlers
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            socket.emit('get_subscriptions');
+        });
+        
+        socket.on('subscription_success', (data) => {
+            showToast(`Subscribed to ${data.symbol}`, 'success');
+        });
+        
+        socket.on('subscriptions_list', (symbols) => {
+            activeSubscriptions = new Set(symbols);
+            updateSubscriptionsList();
+            updateAlertSymbolOptions();
+        });
+        
+        socket.on('restore_subscriptions', (symbols) => {
+            // Restore subscriptions from server
+            activeSubscriptions = new Set(symbols);
+            updateSubscriptionsList();
+            updateAlertSymbolOptions();
+            console.log('Restored subscriptions:', symbols);
+        });
+        
+        socket.on('alerts_list', (alerts) => {
+            activeAlerts = alerts;
+            updateAlertsList();
+            updateActiveAlertsDisplay();
+        });
+        
+        socket.on('trigger_logs', (logs) => {
+            const alertsLog = document.getElementById('alertsLog');
+            if (logs.length > 0) {
+                alertsLog.innerHTML = '';
+                logs.forEach(log => addAlertToLog(log));
+            }
+        });
+        
+        socket.on('stock_update', (data) => {
+            const symbol = data.symbol;
+            const stockData = data.data;
+            
+            stockPrices[symbol] = {
+                price: parseFloat(stockData.price),
+                change_percent: parseFloat(stockData.change_percent || 0),
+                volume: parseInt(stockData.day_volume || 0),
+                time: new Date(parseInt(stockData.time))
+            };
+            
+            updateStockPrices();
+        });
+        
+        socket.on('alert_created', (alert) => {
+            activeAlerts.push(alert);
+            updateAlertsList();
+            updateActiveAlertsDisplay();
+            showToast(`Alert created for ${alert.symbol}`, 'success');
+        });
+        
+        socket.on('alert_updated', (alert) => {
+            const index = activeAlerts.findIndex(a => a.id === alert.id);
+            if (index !== -1) {
+                activeAlerts[index] = alert;
+                updateAlertsList();
+                updateActiveAlertsDisplay();
+            }
+        });
+        
+        socket.on('alert_deleted', (data) => {
+            activeAlerts = activeAlerts.filter(a => a.id !== data.id);
+            updateAlertsList();
+            updateActiveAlertsDisplay();
+        });
+        
+        socket.on('alert_triggered', (data) => {
+            // Add to log
+            addAlertToLog(data.log);
+            
+            // Show modal with color based on condition
+            const modal = document.getElementById('alertModal');
+            const message = document.getElementById('alertMessage');
+            
+            const colorClass = getAlertColorClass(data.condition);
+            message.innerHTML = `
+                <div class="alert ${colorClass}">
+                    <div>
+                        <strong>${data.symbol}</strong> price is ${data.condition} $${data.alert_price}!<br>
+                        Current price: <strong>$${data.current_price.toFixed(2)}</strong><br>
+                        <span class="text-sm opacity-70">Alert has been automatically paused</span>
+                    </div>
+                </div>
+            `;
+            modal.showModal();
+            
+            // Play sound
+            document.getElementById('alertSound').play().catch(e => console.log('Audio play failed:', e));
+            
+            // Show toast
+            showToast(`Alert triggered & paused: ${data.symbol} ${data.condition} $${data.alert_price}!`, 'warning');
+        });
+        
+        // Helper functions
+        function updateSubscriptionsList() {
+            const container = document.getElementById('subscriptionsList');
+            if (activeSubscriptions.size === 0) {
+                container.innerHTML = '<p class="text-center text-base-content/50">No active subscriptions</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            activeSubscriptions.forEach(symbol => {
+                const div = document.createElement('div');
+                div.className = 'flex justify-between items-center bg-base-200 p-2 rounded';
+                div.innerHTML = `
+                    <span class="font-mono font-bold">${symbol}</span>
+                    <button class="btn btn-xs btn-error" onclick="unsubscribeStock('${symbol}')">Remove</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function updateAlertSymbolOptions() {
+            const select = document.getElementById('alertSymbol');
+            const currentValue = select.value;
+            
+            select.innerHTML = '<option value="">Select Stock</option>';
+            activeSubscriptions.forEach(symbol => {
+                const option = document.createElement('option');
+                option.value = symbol;
+                option.textContent = symbol;
+                select.appendChild(option);
+            });
+            
+            // Restore previous selection if still valid
+            if (currentValue && activeSubscriptions.has(currentValue)) {
+                select.value = currentValue;
+            }
+        }
+        
+        function updateAlertsList() {
+            const container = document.getElementById('alertsList');
+            if (activeAlerts.length === 0) {
+                container.innerHTML = '<p class="text-center text-base-content/50">No alerts created</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            activeAlerts.forEach(alert => {
+                const div = document.createElement('div');
+                const colorClass = getAlertColorClass(alert.condition);
+                const iconMap = { above: '↑', below: '↓', equal: '=' };
+                
+                div.className = `alert ${colorClass} text-sm`;
+                div.innerHTML = `
+                    <div class="flex-1">
+                        <div class="font-bold">${alert.symbol} ${iconMap[alert.condition]} $${alert.price}</div>
+                        <div class="text-xs opacity-70">${alert.active ? 'Active' : 'Paused'}</div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button class="btn btn-xs btn-ghost" onclick="editAlert(${alert.id}, '${alert.symbol}', ${alert.price}, '${alert.condition}')">Edit</button>
+                        <button class="btn btn-xs ${alert.active ? 'btn-warning' : 'btn-success'}" onclick="toggleAlert(${alert.id})">${alert.active ? 'Pause' : 'Resume'}</button>
+                        <button class="btn btn-xs btn-error" onclick="deleteAlert(${alert.id})">×</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function updateActiveAlertsDisplay() {
+            const container = document.getElementById('activeAlertsDisplay');
+            const activeOnly = activeAlerts.filter(alert => alert.active);
+            
+            if (activeOnly.length === 0) {
+                container.innerHTML = '<div class="text-center text-base-content/50"><p>No active alerts</p></div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            activeOnly.forEach(alert => {
+                const div = document.createElement('div');
+                const colorClass = getAlertColorClass(alert.condition);
+                const iconMap = { above: '↑', below: '↓', equal: '=' };
+                
+                div.className = `alert ${colorClass} text-sm`;
+                div.innerHTML = `
+                    <div class="flex-1">
+                        <div class="font-bold">${alert.symbol} ${iconMap[alert.condition]} $${alert.price}</div>
+                        <div class="text-xs opacity-70">Watching for price ${alert.condition} $${alert.price}</div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button class="btn btn-xs btn-warning" onclick="toggleAlert(${alert.id})" title="Pause Alert">⏸</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function updateStockPrices() {
+            const container = document.getElementById('stockPricesContainer');
+            if (Object.keys(stockPrices).length === 0) {
+                container.innerHTML = '<div class="text-center text-base-content/50 py-8"><p>Add stocks to see live prices</p></div>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            Object.entries(stockPrices).forEach(([symbol, data]) => {
+                const changeColor = data.change_percent >= 0 ? 'text-success' : 'text-error';
+                const changeIcon = data.change_percent >= 0 ? '↑' : '↓';
+                
+                const div = document.createElement('div');
+                div.className = 'stats shadow w-full bg-base-200';
+                div.innerHTML = `
+                    <div class="stat">
+                        <div class="stat-title">${symbol}</div>
+                        <div class="stat-value text-2xl">$${data.price.toFixed(2)}</div>
+                        <div class="stat-desc ${changeColor}">
+                            ${changeIcon} ${Math.abs(data.change_percent).toFixed(2)}%
+                        </div>
+                        <div class="stat-desc text-xs">
+                            Vol: ${data.volume.toLocaleString()} | ${data.time.toLocaleTimeString()}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function addAlertToLog(log) {
+            const alertsLog = document.getElementById('alertsLog');
+            
+            // Clear placeholder if present
+            if (alertsLog.children.length === 1 && alertsLog.children[0].classList.contains('text-center')) {
+                alertsLog.innerHTML = '';
+            }
+            
+            const div = document.createElement('div');
+            const colorClass = getAlertColorClass(log.condition);
+            const iconMap = { above: '↑', below: '↓', equal: '=' };
+            const timestamp = new Date(log.triggered_at).toLocaleTimeString();
+            
+            div.className = `alert ${colorClass} text-sm`;
+            div.innerHTML = `
+                <div class="flex-1">
+                    <div class="font-bold">[${timestamp}] ${log.symbol} - Alert Triggered & Auto-Paused</div>
+                    <div class="text-xs">
+                        Alert: ${iconMap[log.condition]} $${log.alert_price.toFixed(2)} | 
+                        Triggered at: $${log.trigger_price.toFixed(2)}
+                    </div>
+                    <div class="text-xs opacity-70 mt-1">
+                        Alert has been automatically paused. Resume to reactivate.
+                    </div>
+                </div>
+            `;
+            
+            alertsLog.insertBefore(div, alertsLog.firstChild);
+            
+            // Keep only last 100 logs
+            while (alertsLog.children.length > 100) {
+                alertsLog.removeChild(alertsLog.lastChild);
+            }
+        }
+        
+        function getAlertColorClass(condition) {
+            switch(condition) {
+                case 'above': return 'alert-success';
+                case 'below': return 'alert-error';
+                case 'equal': return 'alert-info';
+                default: return 'alert-warning';
+            }
+        }
+        
+        function unsubscribeStock(symbol) {
+            socket.emit('unsubscribe', { symbol });
+            activeSubscriptions.delete(symbol);
+            delete stockPrices[symbol];
+            updateSubscriptionsList();
+            updateAlertSymbolOptions();
+            updateStockPrices();
+        }
+        
+        function editAlert(id, symbol, price, condition) {
+            editingAlertId = id;
+            document.getElementById('alertId').value = id;
+            document.getElementById('alertSymbol').value = symbol;
+            document.getElementById('alertPrice').value = price;
+            document.getElementById('alertCondition').value = condition;
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+            document.getElementById('saveAlertBtn').textContent = 'Update Alert';
+        }
+        
+        function toggleAlert(id) {
+            socket.emit('toggle_alert', { id });
+        }
+        
+        function deleteAlert(id) {
+            if (confirm('Are you sure you want to delete this alert?')) {
+                socket.emit('delete_alert', { id });
+            }
+        }
+        
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-top toast-end`;
+            const alertClass = type === 'error' ? 'alert-error' : 
+                              type === 'success' ? 'alert-success' : 
+                              type === 'warning' ? 'alert-warning' : 'alert-info';
+            toast.innerHTML = `
+                <div class="alert ${alertClass}">
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // Enter key support
+        document.getElementById('stockSymbol').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('addStockBtn').click();
+        });
+        
+        document.getElementById('alertPrice').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('saveAlertBtn').click();
+        });
+    </script>
+</body>
+</html>
