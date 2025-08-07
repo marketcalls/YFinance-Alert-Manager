@@ -5,22 +5,24 @@ A comprehensive real-time stock price monitoring and alert system built with Fla
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
 ![Flask](https://img.shields.io/badge/Flask-3.0.0-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
-![WebSocket](https://img.shields.io/badge/WebSocket-Enabled-orange)
-![SQLite](https://img.shields.io/badge/Database-SQLite-lightblue)
+
+## Screenshot
+
+![YFinance Alert Manager](static/images/Alert%20Manager.png)
 
 ## Features
 
-### 📈 Real-time Stock Monitoring
+### Real-time Stock Monitoring
 - Monitor multiple stocks simultaneously
 - Live price updates via WebSocket connections
 - Real-time volume and percentage change tracking
 - Support for stocks, ETFs, and cryptocurrencies (e.g., AAPL, SPY, BTC-USD)
 
-### 🔔 Intelligent Alert System
+### Intelligent Alert System
 - **Color-coded alerts with visual indicators:**
-  - 🟢 Green: Price above threshold (↑)
-  - 🔴 Red: Price below threshold (↓)
-  - 🔵 Blue: Price equal to target (=)
+  - Green: Price above threshold
+  - Red: Price below threshold
+  - Blue: Price equal to target
 - **Smart alert management:**
   - Automatic pause after trigger to prevent spam
   - Manual pause/resume functionality
@@ -30,7 +32,7 @@ A comprehensive real-time stock price monitoring and alert system built with Fla
 - **Audio notifications:** Instant sound alerts on trigger
 - **Anti-spam protection:** 60-second cooldown between triggers
 
-### 💻 Modern User Interface
+### Modern User Interface
 - **Clean, responsive design** with DaisyUI components
 - **Dark/Light theme toggle** for user preference
 - **Optimized three-column layout:**
@@ -40,7 +42,7 @@ A comprehensive real-time stock price monitoring and alert system built with Fla
 - **Real-time updates** without page refresh
 - **Intuitive controls** with contextual buttons and status indicators
 
-### 💾 Advanced Data Management
+### Advanced Data Management
 - **SQLite database** with full ACID compliance
 - **Persistent alert storage** survives server restarts
 - **Complete audit trail** with trigger history and timestamps
@@ -50,14 +52,14 @@ A comprehensive real-time stock price monitoring and alert system built with Fla
 
 ## Key Features Overview
 
-### 🎯 Smart Alert Workflow
+### Smart Alert Workflow
 1. **Create alerts** with customizable price thresholds
 2. **Monitor actively** in real-time with visual indicators
 3. **Auto-pause on trigger** to prevent notification spam
 4. **Resume manually** when ready to monitor again
 5. **Complete history** of all triggered alerts with timestamps
 
-### 🖥️ User Interface Layout
+### User Interface Layout
 - **Left Column**: Stock subscription management and alert creation/editing
 - **Center Column**: Live price monitoring for all subscribed stocks
 - **Right Column Top**: Active alerts with quick pause functionality
@@ -73,8 +75,8 @@ A comprehensive real-time stock price monitoring and alert system built with Fla
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/marketcalls/yfinance-alert-manager.git
-cd yfinance-alert-manager
+git clone https://github.com/marketcalls/YFinance-Alert-Manager.git
+cd YFinance-Alert-Manager
 ```
 
 2. Create a virtual environment (recommended):
@@ -127,7 +129,7 @@ http://localhost:5000
 ## Project Structure
 
 ```
-yfinance-alert-manager/
+YFinance-Alert-Manager/
 │
 ├── app.py                 # Main Flask application with SQLAlchemy models
 ├── requirements.txt       # Python dependencies  
@@ -229,18 +231,18 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Future Enhancements
 
-- [ ] **Email/SMS notifications** for triggered alerts
-- [ ] **Technical indicators** (RSI, MACD, Moving Averages)
-- [ ] **Price charts** with historical data visualization
-- [ ] **Alert analytics** with performance metrics
-- [ ] **Export functionality** (CSV/JSON) for alerts and trigger history
-- [ ] **Multi-user support** with authentication and user-specific alerts
-- [ ] **Mobile app** with push notifications
-- [ ] **Docker containerization** for easy deployment
-- [ ] **API endpoints** for programmatic alert management
-- [ ] **Webhook support** for third-party integrations
-- [ ] **Advanced alert conditions** (percentage change, volume-based)
-- [ ] **Portfolio tracking** with total value monitoring
+- Email/SMS notifications for triggered alerts
+- Technical indicators (RSI, MACD, Moving Averages)
+- Price charts with historical data visualization
+- Alert analytics with performance metrics
+- Export functionality (CSV/JSON) for alerts and trigger history
+- Multi-user support with authentication and user-specific alerts
+- Mobile app with push notifications
+- Docker containerization for easy deployment
+- API endpoints for programmatic alert management
+- Webhook support for third-party integrations
+- Advanced alert conditions (percentage change, volume-based)
+- Portfolio tracking with total value monitoring
 
 ## License
 
@@ -260,7 +262,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 If you encounter any issues or have questions, please:
-1. Check the [Issues](https://github.com/marketcalls/yfinance-alert-manager/issues) page
+1. Check the [Issues](https://github.com/marketcalls/YFinance-Alert-Manager/issues) page
 2. Create a new issue with detailed information
 3. Or reach out via GitHub
 
