@@ -1,0 +1,147 @@
+/* ShadCN-inspired black & white theme overrides for DaisyUI/Tailwind */
+
+:root {
+  --radius: 0.5rem;
+}
+
+html[data-theme="dark"] {
+  --bg: 0 0% 3%;
+  --card: 0 0% 6%;
+  --muted: 0 0% 45%;
+  --border: 0 0% 15%;
+  --foreground: 0 0% 98%;
+  --accent: 0 0% 100%;
+  /* Trading terminal accent hues (HSL triplets) */
+  --up: 142 70% 45%;     /* green 500 */
+  --down: 0 70% 58%;     /* red 500-600 */
+  --info: 210 85% 65%;   /* blue 500 */
+  --warn: 38 92% 60%;    /* amber 500 */
+}
+
+html[data-theme="light"] {
+  --bg: 0 0% 100%;
+  --card: 0 0% 98%;
+  --muted: 0 0% 40%;
+  --border: 0 0% 88%;
+  --foreground: 0 0% 4%;
+  --accent: 0 0% 0%;
+  /* Slightly darker accents for readability on white */
+  --up: 142 72% 35%;
+  --down: 0 72% 45%;
+  --info: 210 85% 45%;
+  --warn: 38 92% 45%;
+}
+
+/* Base surfaces */
+body,
+.bg-base-200 { background-color: hsl(var(--bg)); color: hsl(var(--foreground)); }
+.bg-base-100,
+.card,
+.navbar { background-color: hsl(var(--card)) !important; color: hsl(var(--foreground)) !important; }
+
+/* Borders and radii */
+.card, .btn, .input, .select, .stats, .modal-box, .alert { border: 1px solid hsl(var(--border)); border-radius: var(--radius); }
+.rounded-box { border-radius: var(--radius); }
+
+/* Typography */
+h1, h2, .card-title { color: hsl(var(--foreground)); letter-spacing: 0.2px; }
+.text-muted { color: hsl(var(--muted)); }
+.font-mono { font-variant-ligatures: none; }
+
+/* Buttons */
+.btn { background: transparent; color: hsl(var(--foreground)); }
+.btn:hover { background: hsla(var(--foreground), 0.06); }
+.btn-primary, .btn-success, .btn-warning, .btn-error, .btn-info { background: transparent; color: hsl(var(--foreground)); border-color: hsl(var(--border)); }
+.btn-primary:hover, .btn-success:hover, .btn-warning:hover, .btn-error:hover, .btn-info:hover { background: hsla(var(--foreground), 0.08); }
+.btn-ghost { background: transparent; border-color: transparent; color: hsl(var(--foreground)); }
+.btn-ghost:hover { background: hsla(var(--foreground), 0.06); }
+
+/* Inputs */
+.input, .select { background: transparent; color: hsl(var(--foreground)); }
+.input:focus, .select:focus { outline: none; box-shadow: 0 0 0 2px hsla(var(--foreground), 0.12) inset; }
+
+/* Alerts map to subtle monochrome variants */
+.alert { background: transparent; }
+.alert-success, .alert-error, .alert-info, .alert-warning { border-color: hsl(var(--border)); }
+
+/* Stats cards */
+.stats { background: transparent; }
+.stat-title { color: hsl(var(--muted)); text-transform: none; font-weight: 500; }
+.stat-value { color: hsl(var(--foreground)); }
+.stat-desc { color: hsl(var(--muted)); }
+
+/* Toast */
+.toast .alert { background: hsl(var(--card)); }
+/* Color-coded toasts (appended to body, so make global) */
+.toast .alert-success { background-color: hsla(var(--up), 0.12); border-color: hsla(var(--up), 0.5); color: hsl(var(--up)); }
+.toast .alert-error { background-color: hsla(var(--down), 0.12); border-color: hsla(var(--down), 0.5); color: hsl(var(--down)); }
+.toast .alert-info { background-color: hsla(var(--info), 0.12); border-color: hsla(var(--info), 0.5); color: hsl(var(--info)); }
+.toast .alert-warning { background-color: hsla(var(--warn), 0.12); border-color: hsla(var(--warn), 0.5); color: hsl(var(--warn)); }
+
+/* Modal */
+.modal-box { background: hsl(var(--card)); }
+
+/* Swap toggle icons */
+.swap .swap-on, .swap .swap-off { color: hsl(var(--foreground)); }
+
+/* Dividers */
+.divider { color: hsl(var(--muted)); }
+
+/* Utilities */
+.shadow-xl, .shadow-lg { box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+
+
+
+/* --- Additional monochrome overrides to align closer to ShadCN --- */
+/* Neutralize colorful text utility classes */
+.text-primary, .text-success, .text-error, .text-info, .text-warning { color: hsl(var(--foreground)) !important; }
+/* DaisyUI escaped util class */
+.text-base-content\/50 { color: hsl(var(--muted)) !important; }
+
+/* Inputs placeholder */
+.input::placeholder { color: hsl(var(--muted)); opacity: 1; }
+
+/* Select caret */
+.select { background-image: none; }
+
+/* Links */
+a { color: hsl(var(--foreground)); text-decoration-color: hsla(var(--foreground), 0.3); }
+a:hover { text-decoration-color: hsla(var(--foreground), 0.6); }
+
+/* Tables and lists (future-proof) */
+table { border-color: hsl(var(--border)); }
+th, td { border-color: hsl(var(--border)); }
+ul, ol { color: hsl(var(--foreground)); }
+
+/* Trading terminal: scoped colored accents for realtime data + alerts */
+.terminal .text-success { color: hsl(var(--up)) !important; }
+.terminal .text-error { color: hsl(var(--down)) !important; }
+.terminal .text-info { color: hsl(var(--info)) !important; }
+.terminal .text-warning { color: hsl(var(--warn)) !important; }
+
+.terminal .stat-desc.text-success { color: hsl(var(--up)) !important; }
+.terminal .stat-desc.text-error { color: hsl(var(--down)) !important; }
+.terminal .stat-desc.text-info { color: hsl(var(--info)) !important; }
+.terminal .stat-desc.text-warning { color: hsl(var(--warn)) !important; }
+
+.terminal .alert-success { background-color: hsla(var(--up), 0.10); border-color: hsla(var(--up), 0.5); color: hsl(var(--up)); }
+.terminal .alert-error { background-color: hsla(var(--down), 0.10); border-color: hsla(var(--down), 0.5); color: hsl(var(--down)); }
+.terminal .alert-info { background-color: hsla(var(--info), 0.10); border-color: hsla(var(--info), 0.5); color: hsl(var(--info)); }
+.terminal .alert-warning { background-color: hsla(var(--warn), 0.10); border-color: hsla(var(--warn), 0.5); color: hsl(var(--warn)); }
+
+/* Ensure modal alerts are colored even if modal is outside .terminal */
+.modal .alert-success { background-color: hsla(var(--up), 0.10); border-color: hsla(var(--up), 0.5); color: hsl(var(--up)); }
+.modal .alert-error { background-color: hsla(var(--down), 0.10); border-color: hsla(var(--down), 0.5); color: hsl(var(--down)); }
+.modal .alert-info { background-color: hsla(var(--info), 0.10); border-color: hsla(var(--info), 0.5); color: hsl(var(--info)); }
+.modal .alert-warning { background-color: hsla(var(--warn), 0.10); border-color: hsla(var(--warn), 0.5); color: hsl(var(--warn)); }
+
+/* Toasts inherit alert colors */
+.terminal .toast .alert-success { background-color: hsla(var(--up), 0.12); }
+.terminal .toast .alert-error { background-color: hsla(var(--down), 0.12); }
+.terminal .toast .alert-info { background-color: hsla(var(--info), 0.12); }
+.terminal .toast .alert-warning { background-color: hsla(var(--warn), 0.12); }
+
+/* Monospace for numbers to feel more terminal-like */
+.terminal .stat-value,
+.terminal .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
