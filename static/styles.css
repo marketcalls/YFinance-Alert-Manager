@@ -59,6 +59,13 @@ h1, h2, .card-title { color: hsl(var(--foreground)); letter-spacing: 0.2px; }
 /* Inputs */
 .input, .select { background: transparent; color: hsl(var(--foreground)); }
 .input:focus, .select:focus { outline: none; box-shadow: 0 0 0 2px hsla(var(--foreground), 0.12) inset; }
+/* Select dropdown (native popup) */
+.select option, select option { background-color: hsl(var(--card)); color: hsl(var(--foreground)); }
+.select option[disabled], select option[disabled],
+.select option[value=""], select option[value=""] { color: hsl(var(--muted)); }
+/* Hint UA to use correct color scheme for the native popup */
+html[data-theme="dark"] select { color-scheme: dark; }
+html[data-theme="light"] select { color-scheme: light; }
 
 /* Alerts map to subtle monochrome variants */
 .alert { background: transparent; }
